@@ -255,4 +255,4 @@ def comports():
 # test
 if __name__ == '__main__':
     for port, desc, hwid in sorted(comports()):
-        print("%s: %s [%s]" % (port, desc, hwid))
+        print("{0!s}: {1!s} [{2!s}]".format(port, desc, hwid))

@@ -73,7 +73,7 @@ class Serial(SerialBase):
             self.sPort = portId.open("python serial module", 10)
         except Exception as msg:
             self.sPort = None
-            raise SerialException("Could not open port: %s" % msg)
+            raise SerialException("Could not open port: {0!s}".format(msg))
         self._reconfigurePort()
         self._instream = self.sPort.getInputStream()
         self._outstream = self.sPort.getOutputStream()
@@ -94,7 +94,7 @@ class Serial(SerialBase):
         elif self._bytesize == EIGHTBITS:
             jdatabits = comm.SerialPort.DATABITS_8
         else:
-            raise ValueError("unsupported bytesize: %r" % self._bytesize)
+            raise ValueError("unsupported bytesize: {0!r}".format(self._bytesize))
 
         if self._stopbits == STOPBITS_ONE:
             jstopbits = comm.SerialPort.STOPBITS_1
@@ -103,7 +103,7 @@ class Serial(SerialBase):
         elif self._stopbits == STOPBITS_TWO:
             jstopbits = comm.SerialPort.STOPBITS_2
         else:
-            raise ValueError("unsupported number of stopbits: %r" % self._stopbits)
+            raise ValueError("unsupported number of stopbits: {0!r}".format(self._stopbits))
 
         if self._parity == PARITY_NONE:
             jparity = comm.SerialPort.PARITY_NONE
@@ -116,7 +116,7 @@ class Serial(SerialBase):
         elif self._parity == PARITY_SPACE:
             jparity = comm.SerialPort.PARITY_SPACE
         else:
-            raise ValueError("unsupported parity type: %r" % self._parity)
+            raise ValueError("unsupported parity type: {0!r}".format(self._parity))
 
         jflowin = jflowout = 0
         if self._rtscts:
@@ -177,7 +177,7 @@ class Serial(SerialBase):
         if not self.sPort:
             raise portNotOpenError
         if not isinstance(data, (bytes, bytearray)):
-            raise TypeError('expected %s or bytearray, got %s' % (bytes, type(data)))
+            raise TypeError('expected {0!s} or bytearray, got {1!s}'.format(bytes, type(data)))
         self._outstream.write(data)
         return len(data)
 

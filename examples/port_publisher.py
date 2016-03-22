@@ -86,7 +86,7 @@ class ZeroconfService:
             self.group = None
 
     def __str__(self):
-        return "%r @ %s:%s (%s)" % (self.name, self.host, self.port, self.stype)
+        return "{0!r} @ {1!s}:{2!s} ({3!s})".format(self.name, self.host, self.port, self.stype)
 
 
 class Forwarder(ZeroconfService):
@@ -154,7 +154,7 @@ class Forwarder(ZeroconfService):
             self.handle_server_error()
             #~ raise
         if self.log is not None:
-            self.log.info("%s: Waiting for connection on %s..." % (self.device, self.network_port))
+            self.log.info("{0!s}: Waiting for connection on {1!s}...".format(self.device, self.network_port))
 
         # zeroconfig
         self.publish()
@@ -165,7 +165,7 @@ class Forwarder(ZeroconfService):
     def close(self):
         """Close all resources and unpublish service"""
         if self.log is not None:
-            self.log.info("%s: closing..." % (self.device, ))
+            self.log.info("{0!s}: closing...".format(self.device ))
         self.alive = False
         self.unpublish()
         if self.server_socket:
@@ -291,7 +291,7 @@ class Forwarder(ZeroconfService):
             self.socket.setblocking(0)
             self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             if self.log is not None:
-                self.log.warning('%s: Connected by %s:%s' % (self.device, addr[0], addr[1]))
+                self.log.warning('{0!s}: Connected by {1!s}:{2!s}'.format(self.device, addr[0], addr[1]))
             self.serial.rts = True
             self.serial.dtr = True
             if self.log is not None:
@@ -302,7 +302,7 @@ class Forwarder(ZeroconfService):
             # reject connection if there is already one
             connection.close()
             if self.log is not None:
-                self.log.warning('%s: Rejecting connect from %s:%s' % (self.device, addr[0], addr[1]))
+                self.log.warning('{0!s}: Rejecting connect from {1!s}:{2!s}'.format(self.device, addr[0], addr[1]))
 
     def handle_server_error(self):
         """Socket server fails"""
@@ -326,7 +326,7 @@ class Forwarder(ZeroconfService):
                 self.socket.close()
                 self.socket = None
                 if self.log is not None:
-                    self.log.warning('%s: Disconnected' % self.device)
+                    self.log.warning('{0!s}: Disconnected'.format(self.device))
 
 
 def test():
@@ -450,7 +450,7 @@ terminated, it waits for the next connect.
                 # exit first parent
                 sys.exit(0)
         except OSError as e:
-            log.critical("fork #1 failed: %d (%s)\n" % (e.errno, e.strerror))
+            log.critical("fork #1 failed: {0:d} ({1!s})\n".format(e.errno, e.strerror))
             sys.exit(1)
 
         # decouple from parent environment
@@ -464,10 +464,10 @@ terminated, it waits for the next connect.
             if pid > 0:
                 # exit from second parent, save eventual PID before
                 if args.pidfile is not None:
-                    open(args.pidfile, 'w').write("%d" % pid)
+                    open(args.pidfile, 'w').write("{0:d}".format(pid))
                 sys.exit(0)
         except OSError as e:
-            log.critical("fork #2 failed: %d (%s)\n" % (e.errno, e.strerror))
+            log.critical("fork #2 failed: {0:d} ({1!s})\n".format(e.errno, e.strerror))
             sys.exit(1)
 
         if args.logfile is None:
@@ -511,7 +511,7 @@ terminated, it waits for the next connect.
         except KeyError:
             pass
         else:
-            log.info("unpublish: %s" % (forwarder))
+            log.info("unpublish: {0!s}".format((forwarder)))
 
     alive = True
     next_check = 0
@@ -525,7 +525,7 @@ terminated, it waits for the next connect.
                 connected = [d for d, p, i in serial.tools.list_ports.grep(args.ports_regex)]
                 # Handle devices that are published, but no longer connected
                 for device in set(published).difference(connected):
-                    log.info("unpublish: %s" % (published[device]))
+                    log.info("unpublish: {0!s}".format((published[device])))
                     unpublish(published[device])
                 # Handle devices that are connected but not yet published
                 for device in sorted(set(connected).difference(published)):
@@ -536,11 +536,11 @@ terminated, it waits for the next connect.
                         port += 1
                     published[device] = Forwarder(
                             device,
-                            "%s on %s" % (device, hostname),
+                            "{0!s} on {1!s}".format(device, hostname),
                             port,
                             on_close=unpublish,
                             log=log)
-                    log.warning("publish: %s" % (published[device]))
+                    log.warning("publish: {0!s}".format((published[device])))
                     published[device].open()
 
             # select_start = time.time()
