@@ -59,7 +59,7 @@ class Serial(SerialBase):
             self._socket = socket.create_connection(self.from_url(self.portstr))
         except Exception as msg:
             self._socket = None
-            raise SerialException("Could not open port %s: %s" % (self.portstr, msg))
+            raise SerialException("Could not open port {0!s}: {1!s}".format(self.portstr, msg))
 
         self._socket.settimeout(POLL_TIMEOUT)  # used for write timeout support :/
 
@@ -103,7 +103,7 @@ class Serial(SerialBase):
         """extract host and port from an URL string"""
         parts = urlparse.urlsplit(url)
         if parts.scheme != "socket":
-            raise SerialException('expected a string in the form "socket://<host>:<port>[?logging={debug|info|warning|error}]": not starting with socket:// (%r)' % (parts.scheme,))
+            raise SerialException('expected a string in the form "socket://<host>:<port>[?logging={{debug|info|warning|error}}]": not starting with socket:// ({0!r})'.format(parts.scheme))
         try:
             # process options now, directly altering self
             for option, values in urlparse.parse_qs(parts.query, True).items():
@@ -113,13 +113,13 @@ class Serial(SerialBase):
                     self.logger.setLevel(LOGGER_LEVELS[values[0]])
                     self.logger.debug('enabled logging')
                 else:
-                    raise ValueError('unknown option: %r' % (option,))
+                    raise ValueError('unknown option: {0!r}'.format(option))
             # get host and port
             host, port = parts.hostname, parts.port
             if not 0 <= port < 65536:
                 raise ValueError("port not in range 0...65535")
         except ValueError as e:
-            raise SerialException('expected a string in the form "socket://<host>:<port>[?logging={debug|info|warning|error}]": %s' % e)
+            raise SerialException('expected a string in the form "socket://<host>:<port>[?logging={{debug|info|warning|error}}]": {0!s}'.format(e))
         return (host, port)
 
     #  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
@@ -172,18 +172,18 @@ class Serial(SerialBase):
                 pass
             except socket.error as e:
                 # connection fails -> terminate loop
-                raise SerialException('connection failed (%s)' % e)
+                raise SerialException('connection failed ({0!s})'.format(e))
             except OSError as e:
                 # this is for Python 3.x where select.error is a subclass of
                 # OSError ignore EAGAIN errors. all other errors are shown
                 if e.errno != errno.EAGAIN:
-                    raise SerialException('read failed: %s' % (e,))
+                    raise SerialException('read failed: {0!s}'.format(e))
             except select.error as e:
                 # this is for Python 2.x
                 # ignore EAGAIN errors. all other errors are shown
                 # see also http://www.python.org/dev/peps/pep-3151/#select
                 if e[0] != errno.EAGAIN:
-                    raise SerialException('read failed: %s' % (e,))
+                    raise SerialException('read failed: {0!s}'.format(e))
         return bytes(read)
 
     def write(self, data):
@@ -198,7 +198,7 @@ class Serial(SerialBase):
             self._socket.sendall(to_bytes(data))
         except socket.error as e:
             # XXX what exception if socket connection fails
-            raise SerialException("socket connection failed: %s" % e)
+            raise SerialException("socket connection failed: {0!s}".format(e))
         return len(data)
 
     def reset_input_buffer(self):
@@ -226,23 +226,23 @@ class Serial(SerialBase):
         if not self.is_open:
             raise portNotOpenError
         if self.logger:
-            self.logger.info('ignored send_break(%r)' % (duration,))
+            self.logger.info('ignored send_break({0!r})'.format(duration))
 
     def _update_break_state(self):
         """Set break: Controls TXD. When active, to transmitting is
         possible."""
         if self.logger:
-            self.logger.info('ignored _update_break_state(%r)' % (self._break_state,))
+            self.logger.info('ignored _update_break_state({0!r})'.format(self._break_state))
 
     def _update_rts_state(self):
         """Set terminal status line: Request To Send"""
         if self.logger:
-            self.logger.info('ignored _update_rts_state(%r)' % (self._rts_state,))
+            self.logger.info('ignored _update_rts_state({0!r})'.format(self._rts_state))
 
     def _update_dtr_state(self):
         """Set terminal status line: Data Terminal Ready"""
         if self.logger:
-            self.logger.info('ignored _update_dtr_state(%r)' % (self._dtr_state,))
+            self.logger.info('ignored _update_dtr_state({0!r})'.format(self._dtr_state))
 
     @property
     def cts(self):
@@ -293,11 +293,11 @@ class Serial(SerialBase):
 if __name__ == '__main__':
     import sys
     s = Serial('socket://localhost:7000')
-    sys.stdout.write('%s\n' % s)
+    sys.stdout.write('{0!s}\n'.format(s))
 
     sys.stdout.write("write...\n")
     s.write(b"hello\n")
     s.flush()
-    sys.stdout.write("read: %s\n" % s.read(5))
+    sys.stdout.write("read: {0!s}\n".format(s.read(5)))
 
     s.close()

@@ -145,7 +145,7 @@ elif os.name == 'posix':
             termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.old)
 
 else:
-    raise NotImplementedError("Sorry no implementation for your platform (%s) available." % sys.platform)
+    raise NotImplementedError("Sorry no implementation for your platform ({0!s}) available.".format(sys.platform))
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

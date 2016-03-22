@@ -34,15 +34,15 @@ don't know how to number ttys on this system.
 ! Use an explicit path (eg /dev/ttyS1) or send this information to
 ! the author of this module:
 
-sys.platform = %r
-os.name = %r
-serialposix.py version = %s
+sys.platform = {0!r}
+os.name = {1!r}
+serialposix.py version = {2!s}
 
 also add the device name of the serial port and where the
 counting starts for the first serial port.
 e.g. 'first serial port: /dev/ttyS0'
 and with a bit luck you can get this module running...
-""" % (sys.platform, os.name, serial.VERSION))
+""".format(sys.platform, os.name, serial.VERSION))
         raise NotImplementedError('no number-to-device mapping defined on this platform')
 
     def _set_special_baudrate(self, baudrate):
@@ -108,7 +108,7 @@ if plat[:5] == 'linux':    # Linux (confirmed)
         }
 
         def number_to_device(self, port_number):
-            return '/dev/ttyS%d' % (port_number,)
+            return '/dev/ttyS{0:d}'.format(port_number)
 
         def _set_special_baudrate(self, baudrate):
             # right size is 44 on x86_64, allow for some growth
@@ -124,7 +124,7 @@ if plat[:5] == 'linux':    # Linux (confirmed)
                 # set serial_struct
                 fcntl.ioctl(self.fd, TCSETS2, buf)
             except IOError as e:
-                raise ValueError('Failed to set custom baud rate (%s): %s' % (baudrate, e))
+                raise ValueError('Failed to set custom baud rate ({0!s}): {1!s}'.format(baudrate, e))
 
         def _set_rs485_mode(self, rs485_settings):
             buf = array.array('i', [0] * 8)  # flags, delaytx, delayrx, padding
@@ -149,7 +149,7 @@ if plat[:5] == 'linux':    # Linux (confirmed)
                     buf[0] = 0  # clear SER_RS485_ENABLED
                 fcntl.ioctl(self.fd, TIOCSRS485, buf)
             except IOError as e:
-                raise ValueError('Failed to set RS485 mode: %s' % (e,))
+                raise ValueError('Failed to set RS485 mode: {0!s}'.format(e))
 
 
 elif plat == 'cygwin':       # cygwin/win32 (confirmed)
@@ -170,18 +170,18 @@ elif plat == 'cygwin':       # cygwin/win32 (confirmed)
         }
 
         def number_to_device(self, port_number):
-            return '/dev/com%d' % (port_number + 1,)
+            return '/dev/com{0:d}'.format(port_number + 1)
 
 
 elif plat[:7] == 'openbsd':    # OpenBSD
     class PlatformSpecific(PlatformSpecificBase):
         def number_to_device(self, port_number):
-            return '/dev/cua%02d' % (port_number,)
+            return '/dev/cua{0:02d}'.format(port_number)
 
 elif plat[:3] == 'bsd' or plat[:7] == 'freebsd':
     class PlatformSpecific(PlatformSpecificBase):
         def number_to_device(self, port_number):
-            return '/dev/cuad%d' % (port_number,)
+            return '/dev/cuad{0:d}'.format(port_number)
 
 elif plat[:6] == 'darwin':   # OS X
     import array
@@ -189,7 +189,7 @@ elif plat[:6] == 'darwin':   # OS X
 
     class PlatformSpecific(PlatformSpecificBase):
         def number_to_device(self, port_number):
-            return '/dev/cuad%d' % (port_number,)
+            return '/dev/cuad{0:d}'.format(port_number)
 
         osx_version = os.uname()[2].split('.')
         # Tiger or above can support arbitrary serial speeds
@@ -203,17 +203,17 @@ elif plat[:6] == 'darwin':   # OS X
 elif plat[:6] == 'netbsd':   # NetBSD 1.6 testing by Erk
     class PlatformSpecific(PlatformSpecificBase):
         def number_to_device(self, port_number):
-            return '/dev/dty%02d' % (port_number,)
+            return '/dev/dty{0:02d}'.format(port_number)
 
 elif plat[:4] == 'irix':     # IRIX (partially tested)
     class PlatformSpecific(PlatformSpecificBase):
         def number_to_device(self, port_number):
-            return '/dev/ttyf%d' % (port_number + 1,)  # XXX different device names depending on flow control
+            return '/dev/ttyf{0:d}'.format(port_number + 1)  # XXX different device names depending on flow control
 
 elif plat[:2] == 'hp':       # HP-UX (not tested)
     class PlatformSpecific(PlatformSpecificBase):
         def number_to_device(self, port_number):
-            return '/dev/tty%dp0' % (port_number + 1,)
+            return '/dev/tty{0:d}p0'.format(port_number + 1)
 
 elif plat[:5] == 'sunos':    # Solaris/SunOS (confirmed)
     class PlatformSpecific(PlatformSpecificBase):
@@ -223,7 +223,7 @@ elif plat[:5] == 'sunos':    # Solaris/SunOS (confirmed)
 elif plat[:3] == 'aix':      # AIX
     class PlatformSpecific(PlatformSpecificBase):
         def number_to_device(self, port_number):
-            return '/dev/tty%d' % (port_number,)
+            return '/dev/tty{0:d}'.format(port_number)
 
 else:
     class PlatformSpecific(PlatformSpecificBase):
@@ -291,7 +291,7 @@ class Serial(SerialBase, PlatformSpecific):
             self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
         except OSError as msg:
             self.fd = None
-            raise SerialException(msg.errno, "could not open port %s: %s" % (self._port, msg))
+            raise SerialException(msg.errno, "could not open port {0!s}: {1!s}".format(self._port, msg))
         #~ fcntl.fcntl(self.fd, fcntl.F_SETFL, 0)  # set blocking
 
         try:
@@ -327,7 +327,7 @@ class Serial(SerialBase, PlatformSpecific):
             orig_attr = termios.tcgetattr(self.fd)
             iflag, oflag, cflag, lflag, ispeed, ospeed, cc = orig_attr
         except termios.error as msg:      # if a port is nonexistent but has a /dev file, it'll fail here
-            raise SerialException("Could not configure port: %s" % msg)
+            raise SerialException("Could not configure port: {0!s}".format(msg))
         # set up raw mode / no echo / binary
         cflag |= (termios.CLOCAL | termios.CREAD)
         lflag &= ~(termios.ICANON | termios.ECHO | termios.ECHOE |
@@ -346,7 +346,7 @@ class Serial(SerialBase, PlatformSpecific):
 
         # setup baud rate
         try:
-            ispeed = ospeed = getattr(termios, 'B%s' % (self._baudrate))
+            ispeed = ospeed = getattr(termios, 'B{0!s}'.format((self._baudrate)))
         except AttributeError:
             try:
                 ispeed = ospeed = self.BAUDRATE_CONSTANTS[self._baudrate]
@@ -357,10 +357,10 @@ class Serial(SerialBase, PlatformSpecific):
                 try:
                     custom_baud = int(self._baudrate)  # store for later
                 except ValueError:
-                    raise ValueError('Invalid baud rate: %r' % self._baudrate)
+                    raise ValueError('Invalid baud rate: {0!r}'.format(self._baudrate))
                 else:
                     if custom_baud < 0:
-                        raise ValueError('Invalid baud rate: %r' % self._baudrate)
+                        raise ValueError('Invalid baud rate: {0!r}'.format(self._baudrate))
 
         # setup char len
         cflag &= ~termios.CSIZE
@@ -373,7 +373,7 @@ class Serial(SerialBase, PlatformSpecific):
         elif self._bytesize == 5:
             cflag |= termios.CS5
         else:
-            raise ValueError('Invalid char len: %r' % self._bytesize)
+            raise ValueError('Invalid char len: {0!r}'.format(self._bytesize))
         # setup stop bits
         if self._stopbits == serial.STOPBITS_ONE:
             cflag &= ~(termios.CSTOPB)
@@ -382,7 +382,7 @@ class Serial(SerialBase, PlatformSpecific):
         elif self._stopbits == serial.STOPBITS_TWO:
             cflag |= (termios.CSTOPB)
         else:
-            raise ValueError('Invalid stop bit specification: %r' % self._stopbits)
+            raise ValueError('Invalid stop bit specification: {0!r}'.format(self._stopbits))
         # setup parity
         iflag &= ~(termios.INPCK | termios.ISTRIP)
         if self._parity == serial.PARITY_NONE:
@@ -398,7 +398,7 @@ class Serial(SerialBase, PlatformSpecific):
             cflag |= (termios.PARENB | CMSPAR)
             cflag &= ~(termios.PARODD)
         else:
-            raise ValueError('Invalid parity: %r' % self._parity)
+            raise ValueError('Invalid parity: {0!r}'.format(self._parity))
         # setup flow control
         # xonxoff
         if hasattr(termios, 'IXANY'):
@@ -427,11 +427,11 @@ class Serial(SerialBase, PlatformSpecific):
         # buffer
         # vmin "minimal number of characters to be read. 0 for non blocking"
         if vmin < 0 or vmin > 255:
-            raise ValueError('Invalid vmin: %r ' % vmin)
+            raise ValueError('Invalid vmin: {0!r} '.format(vmin))
         cc[termios.VMIN] = vmin
         # vtime
         if vtime < 0 or vtime > 255:
-            raise ValueError('Invalid vtime: %r' % vtime)
+            raise ValueError('Invalid vtime: {0!r}'.format(vtime))
         cc[termios.VTIME] = vtime
         # activate settings
         if force_update or [iflag, oflag, cflag, lflag, ispeed, ospeed, cc] != orig_attr:
@@ -502,13 +502,13 @@ class Serial(SerialBase, PlatformSpecific):
                 # this is for Python 3.x where select.error is a subclass of
                 # OSError ignore EAGAIN errors. all other errors are shown
                 if e.errno != errno.EAGAIN:
-                    raise SerialException('read failed: %s' % (e,))
+                    raise SerialException('read failed: {0!s}'.format(e))
             except select.error as e:
                 # this is for Python 2.x
                 # ignore EAGAIN errors. all other errors are shown
                 # see also http://www.python.org/dev/peps/pep-3151/#select
                 if e[0] != errno.EAGAIN:
-                    raise SerialException('read failed: %s' % (e,))
+                    raise SerialException('read failed: {0!s}'.format(e))
         return bytes(read)
 
     def write(self, data):
@@ -544,7 +544,7 @@ class Serial(SerialBase, PlatformSpecific):
                 raise
             except OSError as v:
                 if v.errno != errno.EAGAIN:
-                    raise SerialException('write failed: %s' % (v,))
+                    raise SerialException('write failed: {0!s}'.format(v))
                 # still calculate and check timeout
                 if timeout and timeout - time.time() < 0:
                     raise writeTimeoutError
@@ -750,10 +750,10 @@ class VTIMESerial(Serial):
             orig_attr = termios.tcgetattr(self.fd)
             iflag, oflag, cflag, lflag, ispeed, ospeed, cc = orig_attr
         except termios.error as msg:      # if a port is nonexistent but has a /dev file, it'll fail here
-            raise serial.SerialException("Could not configure port: %s" % msg)
+            raise serial.SerialException("Could not configure port: {0!s}".format(msg))
 
         if vtime < 0 or vtime > 255:
-            raise ValueError('Invalid vtime: %r' % vtime)
+            raise ValueError('Invalid vtime: {0!r}'.format(vtime))
         cc[termios.VTIME] = vtime
         cc[termios.VMIN] = vmin
 

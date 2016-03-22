@@ -65,12 +65,12 @@ class GUID(ctypes.Structure):
     ]
 
     def __str__(self):
-        return "{%08x-%04x-%04x-%s-%s}" % (
+        return "{{{0:08x}-{1:04x}-{2:04x}-{3!s}-{4!s}}}".format(
             self.Data1,
             self.Data2,
             self.Data3,
-            ''.join(["%02x" % d for d in self.Data4[:2]]),
-            ''.join(["%02x" % d for d in self.Data4[2:]]),
+            ''.join(["{0:02x}".format(d) for d in self.Data4[:2]]),
+            ''.join(["{0:02x}".format(d) for d in self.Data4[2:]])
         )
 
 
@@ -83,7 +83,7 @@ class SP_DEVINFO_DATA(ctypes.Structure):
     ]
 
     def __str__(self):
-        return "ClassGuid:%s DevInst:%s" % (self.ClassGuid, self.DevInst)
+        return "ClassGuid:{0!s} DevInst:{1!s}".format(self.ClassGuid, self.DevInst)
 
 PSP_DEVINFO_DATA = ctypes.POINTER(SP_DEVINFO_DATA)
 
@@ -244,7 +244,7 @@ def comports():
                     location = []
                     for g in m:
                         if g.group(1):
-                            location.append('%d' % (int(g.group(1)) + 1))
+                            location.append('{0:d}'.format((int(g.group(1)) + 1)))
                         else:
                             if len(location) > 1:
                                 location.append('.')
@@ -291,4 +291,4 @@ def comports():
 # test
 if __name__ == '__main__':
     for port, desc, hwid in sorted(comports()):
-        print("%s: %s [%s]" % (port, desc, hwid))
+        print("{0!s}: {1!s} [{2!s}]".format(port, desc, hwid))

@@ -162,7 +162,7 @@ class Serial(serial.Serial):
         """extract host and port from an URL string"""
         parts = urlparse.urlsplit(url)
         if parts.scheme != 'spy':
-            raise serial.SerialException('expected a string in the form "spy://port[?option[=value][&option[=value]]]": not starting with spy:// (%r)' % (parts.scheme,))
+            raise serial.SerialException('expected a string in the form "spy://port[?option[=value][&option[=value]]]": not starting with spy:// ({0!r})'.format(parts.scheme))
         # process options now, directly altering self
         formatter = FormatHexdump
         color = False
@@ -178,9 +178,9 @@ class Serial(serial.Serial):
                 elif option == 'all':
                     self.show_all = True
                 else:
-                    raise ValueError('unknown option: %r' % (option,))
+                    raise ValueError('unknown option: {0!r}'.format(option))
         except ValueError as e:
-            raise serial.SerialException('expected a string in the form "spy://port[?option[=value][&option[=value]]]": %s' % e)
+            raise serial.SerialException('expected a string in the form "spy://port[?option[=value][&option[=value]]]": {0!s}'.format(e))
         self.formatter = formatter(output, color)
         return ''.join([parts.netloc, parts.path])
 

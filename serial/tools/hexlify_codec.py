@@ -66,7 +66,7 @@ class IncrementalEncoder(codecs.IncrementalEncoder):
                 state = 0
             else:
                 if self.errors == 'strict':
-                    raise UnicodeError('non-hex digit found: %r' % c)
+                    raise UnicodeError('non-hex digit found: {0!r}'.format(c))
         self.state = state
         return serial.to_bytes(encoded)
 

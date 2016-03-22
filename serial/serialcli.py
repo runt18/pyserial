@@ -43,7 +43,7 @@ class Serial(SerialBase):
             self._port_handle = System.IO.Ports.SerialPort(self.portstr)
         except Exception as msg:
             self._port_handle = None
-            raise SerialException("could not open port %s: %s" % (self.portstr, msg))
+            raise SerialException("could not open port {0!s}: {1!s}".format(self.portstr, msg))
 
         # if RTS and/or DTR are not set before open, they default to True
         if self._rts_state is None:
@@ -96,7 +96,7 @@ class Serial(SerialBase):
         elif self._bytesize == EIGHTBITS:
             self._port_handle.DataBits = 8
         else:
-            raise ValueError("Unsupported number of data bits: %r" % self._bytesize)
+            raise ValueError("Unsupported number of data bits: {0!r}".format(self._bytesize))
 
         if self._parity == PARITY_NONE:
             self._port_handle.Parity = getattr(System.IO.Ports.Parity, 'None')  # reserved keyword in Py3k
@@ -109,7 +109,7 @@ class Serial(SerialBase):
         elif self._parity == PARITY_SPACE:
             self._port_handle.Parity = System.IO.Ports.Parity.Space
         else:
-            raise ValueError("Unsupported parity mode: %r" % self._parity)
+            raise ValueError("Unsupported parity mode: {0!r}".format(self._parity))
 
         if self._stopbits == STOPBITS_ONE:
             self._port_handle.StopBits = System.IO.Ports.StopBits.One
@@ -118,7 +118,7 @@ class Serial(SerialBase):
         elif self._stopbits == STOPBITS_TWO:
             self._port_handle.StopBits = System.IO.Ports.StopBits.Two
         else:
-            raise ValueError("Unsupported number of stop bits: %r" % self._stopbits)
+            raise ValueError("Unsupported number of stop bits: {0!r}".format(self._stopbits))
 
         if self._rtscts and self._xonxoff:
             self._port_handle.Handshake = System.IO.Ports.Handshake.RequestToSendXOnXOff
