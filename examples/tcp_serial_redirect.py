@@ -120,7 +120,7 @@ it waits for the next connect.
     try:
         ser.open()
     except serial.SerialException as e:
-        sys.stderr.write("Could not open serial port {}: {}\n".format(ser.name, e))
+        sys.stderr.write("Could not open serial port {0}: {1}\n".format(ser.name, e))
         sys.exit(1)
 
     ser_to_net = SerialToNet()
@@ -133,9 +133,9 @@ it waits for the next connect.
     srv.listen(1)
     try:
         while True:
-            sys.stderr.write("Waiting for connection on {}...\n".format(args.localport))
+            sys.stderr.write("Waiting for connection on {0}...\n".format(args.localport))
             client_socket, addr = srv.accept()
-            sys.stderr.write('Connected by {}\n'.format(addr))
+            sys.stderr.write('Connected by {0}\n'.format(addr))
             try:
                 ser_to_net.socket = client_socket
                 # enter network <-> serial loop
@@ -150,7 +150,7 @@ it waits for the next connect.
                         # probably got disconnected
                         break
             except socket.error as msg:
-                sys.stderr.write('ERROR: {}\n'.format(msg))
+                sys.stderr.write('ERROR: {0}\n'.format(msg))
             finally:
                 ser_to_net.socket = None
                 sys.stderr.write('Disconnected\n')

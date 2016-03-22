@@ -38,7 +38,7 @@ def sixteen(data):
     """
     n = 0
     for b in serial.iterbytes(data):
-        yield ('{:02X} '.format(ord(b)), b.decode('ascii') if b' ' <= b < b'\x7f' else '.')
+        yield ('{0:02X} '.format(ord(b)), b.decode('ascii') if b' ' <= b < b'\x7f' else '.')
         n += 1
         if n == 8:
             yield (' ', '')
@@ -121,7 +121,7 @@ class FormatHexdump(object):
         self.control_color = '\x1b[37m'
 
     def write_line(self, timestamp, label, value, value2=''):
-        self.output.write('{:010.3f} {:4} {}{}\n'.format(timestamp, label, value, value2))
+        self.output.write('{0:010.3f} {1:4} {2}{3}\n'.format(timestamp, label, value, value2))
         self.output.flush()
 
     def rx(self, data):
@@ -129,7 +129,7 @@ class FormatHexdump(object):
             self.output.write(self.rx_color)
         if data:
             for offset, row in hexdump(data):
-                self.write_line(time.time() - self.start_time, 'RX', '{:04X}  '.format(offset), row)
+                self.write_line(time.time() - self.start_time, 'RX', '{0:04X}  '.format(offset), row)
         else:
             self.write_line(time.time() - self.start_time, 'RX', '<empty>')
 
@@ -137,7 +137,7 @@ class FormatHexdump(object):
         if self.color:
             self.output.write(self.tx_color)
         for offset, row in hexdump(data):
-            self.write_line(time.time() - self.start_time, 'TX', '{:04X}  '.format(offset), row)
+            self.write_line(time.time() - self.start_time, 'TX', '{0:04X}  '.format(offset), row)
 
     def control(self, name, value):
         if self.color:
@@ -198,7 +198,7 @@ class Serial(serial.Serial):
     def in_waiting(self):
         n = super(Serial, self).in_waiting
         if self.show_all:
-            self.formatter.control('Q-RX', 'in_waiting -> {}'.format(n))
+            self.formatter.control('Q-RX', 'in_waiting -> {0}'.format(n))
         return n
 
     def flush(self):
@@ -214,7 +214,7 @@ class Serial(serial.Serial):
         super(Serial, self).reset_output_buffer()
 
     def send_break(self, duration=0.25):
-        self.formatter.control('BRK', 'send_break {}s'.format(duration))
+        self.formatter.control('BRK', 'send_break {0}s'.format(duration))
         super(Serial, self).send_break(duration)
 
     @serial.Serial.break_condition.setter

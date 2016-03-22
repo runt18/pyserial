@@ -186,11 +186,11 @@ def location_to_string(locationID):
     """
     helper to calculate port and bus number from locationID
     """
-    loc = ['{}-'.format(locationID >> 24)]
+    loc = ['{0}-'.format(locationID >> 24)]
     while locationID & 0xf00000:
         if len(loc) > 1:
             loc.append('.')
-        loc.append('{}'.format((locationID >> 20) & 0xf))
+        loc.append('{0}'.format((locationID >> 20) & 0xf))
         locationID <<= 4
     return ''.join(loc)
 

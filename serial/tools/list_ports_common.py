@@ -45,18 +45,18 @@ class ListPortInfo(object):
 
     def usb_description(self):
         if self.interface is not None:
-            return '{} - {}'.format(self.product, self.interface)
+            return '{0} - {1}'.format(self.product, self.interface)
         elif self.product is not None:
             return self.product
         else:
             return self.name
 
     def usb_info(self):
-        return 'USB VID:PID={:04X}:{:04X}{}{}'.format(
+        return 'USB VID:PID={0:04X}:{1:04X}{2}{3}'.format(
                 self.vid,
                 self.pid,
-                ' SER={}'.format(self.serial_number) if self.serial_number is not None else '',
-                ' LOCATION={}'.format(self.location) if self.location is not None else '',
+                ' SER={0}'.format(self.serial_number) if self.serial_number is not None else '',
+                ' LOCATION={0}'.format(self.location) if self.location is not None else '',
                 )
 
     def apply_usb_info(self):
@@ -71,7 +71,7 @@ class ListPortInfo(object):
         return numsplit(self.device) < numsplit(other.device)
 
     def __str__(self):
-        return '{} - {}'.format(self.device, self.description)
+        return '{0} - {1}'.format(self.device, self.description)
 
     def __getitem__(self, index):
         """Item access: backwards compatible -> (port, desc, hwid)"""
@@ -82,7 +82,7 @@ class ListPortInfo(object):
         elif index == 2:
             return self.hwid
         else:
-            raise IndexError('{} > 2'.format(index))
+            raise IndexError('{0} > 2'.format(index))
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # test

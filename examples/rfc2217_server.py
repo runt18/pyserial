@@ -150,21 +150,21 @@ it waits for the next connect.
     try:
         ser.open()
     except serial.SerialException as e:
-        logging.error("Could not open serial port {}: {}".format(ser.name, e))
+        logging.error("Could not open serial port {0}: {1}".format(ser.name, e))
         sys.exit(1)
 
-    logging.info("Serving serial port: {}".format(ser.name))
+    logging.info("Serving serial port: {0}".format(ser.name))
     settings = ser.get_settings()
 
     srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     srv.bind(('', args.localport))
     srv.listen(1)
-    logging.info("TCP/IP port: {}".format(args.localport))
+    logging.info("TCP/IP port: {0}".format(args.localport))
     while True:
         try:
             client_socket, addr = srv.accept()
-            logging.info('Connected by {}:{}'.format(addr[0], addr[1]))
+            logging.info('Connected by {0}:{1}'.format(addr[0], addr[1]))
             client_socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             ser.rts = True
             ser.dtr = True

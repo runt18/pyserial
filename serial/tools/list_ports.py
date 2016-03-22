@@ -86,14 +86,14 @@ def main():
     # list them
     for n, (port, desc, hwid) in enumerate(iterator, 1):
         if args.n is None or args.n == n:
-            sys.stdout.write("{:20}\n".format(port))
+            sys.stdout.write("{0:20}\n".format(port))
             if args.verbose:
-                sys.stdout.write("    desc: {}\n".format(desc))
-                sys.stdout.write("    hwid: {}\n".format(hwid))
+                sys.stdout.write("    desc: {0}\n".format(desc))
+                sys.stdout.write("    hwid: {0}\n".format(hwid))
         hits += 1
     if not args.quiet:
         if hits:
-            sys.stderr.write("{} ports found\n".format(hits))
+            sys.stderr.write("{0} ports found\n".format(hits))
         else:
             sys.stderr.write("no ports found\n")
 

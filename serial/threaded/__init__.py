@@ -214,7 +214,7 @@ if __name__ == '__main__':
             self.write_line('hello world')
 
         def handle_line(self, data):
-            sys.stdout.write('line received: {}\n'.format(repr(data)))
+            sys.stdout.write('line received: {0}\n'.format(repr(data)))
 
         def connection_lost(self, exc):
             if exc:

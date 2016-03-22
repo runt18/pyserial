@@ -23,7 +23,7 @@ def hex_encode(input, errors='strict'):
 
 
 def hex_decode(input, errors='strict'):
-    return (''.join('{:02X} '.format(b) for b in input), len(input))
+    return (''.join('{0:02X} '.format(b) for b in input), len(input))
 
 
 class Codec(codecs.Codec):
@@ -31,7 +31,7 @@ class Codec(codecs.Codec):
         return serial.to_bytes([int(h, 16) for h in input.split()])
 
     def decode(self, input, errors='strict'):
-        return ''.join('{:02X} '.format(b) for b in input)
+        return ''.join('{0:02X} '.format(b) for b in input)
 
 
 class IncrementalEncoder(codecs.IncrementalEncoder):
@@ -73,7 +73,7 @@ class IncrementalEncoder(codecs.IncrementalEncoder):
 
 class IncrementalDecoder(codecs.IncrementalDecoder):
     def decode(self, input, final=False):
-        return ''.join('{:02X} '.format(b) for b in input)
+        return ''.join('{0:02X} '.format(b) for b in input)
 
 
 class StreamWriter(Codec, codecs.StreamWriter):
