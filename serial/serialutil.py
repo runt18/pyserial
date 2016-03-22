@@ -431,7 +431,7 @@ class SerialBase(io.RawIOBase):
         Get current port settings as a dictionary. For use with
         apply_settings().
         """
-        return dict([(key, getattr(self, '_' + key)) for key in self._SAVED_SETTINGS])
+        return {key: getattr(self, '_' + key) for key in self._SAVED_SETTINGS}
 
     def apply_settings(self, d):
         """\
